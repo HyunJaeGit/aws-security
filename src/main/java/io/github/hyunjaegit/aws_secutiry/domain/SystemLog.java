@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+// 데이터베이스에 저장될 표(Table)의 구조를 정의
+
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class SystemLog {
-
-    // 데이터베이스에 저장될 표(Table)의 구조를 정의
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
