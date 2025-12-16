@@ -1,10 +1,10 @@
 package io.github.hyunjaegit.aws_secutiry.config;
 
 import io.github.hyunjaegit.aws_secutiry.user.User;
+import io.github.hyunjaegit.aws_secutiry.filter.JwtAuthenticationFilter; // import 추가
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,64 +14,66 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; // import 추가
+
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // 1. 필드 선언 (클래스 레벨)
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    // 2. 생성자 추가 (클래스 레벨, DI 받음)
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // ⚠️ 이 부분은 그대로 두셔도 됩니다.
-                // 아래의 authorizeHttpRequests 부분만 변경할게요.
+                .csrf(csrf -> csrf.disable()) // CSRF 방어 비활성화 (JWT는 세션을 사용하지 않으므로)
 
-                // 변경 전: .authorizeHttpRequests(authorize -> authorize...)
                 .authorizeHttpRequests(authorize -> authorize
-                        // 접근 규칙 강화 (인증 요구 테스트)
-                        // ⚠️ 기존: .requestMatchers("/api/logs").permitAll()
-                        // 👇 수정: 인증된 사용자만 접근 가능
+                        // 3. 로그인 API만 인증 없이 접근 허용
+                        .requestMatchers("/api/auth/login").permitAll()
+
+                        // /api/logs와 그 외 모든 요청은 인증 필요
                         .requestMatchers("/api/logs").authenticated()
                         .anyRequest().authenticated()
                 )
-                // 로그인 폼 활성화
-                // Customizer.withDefaults()를 사용하면
-                // Spring Security의 기본 설정값으로 formLogin을 활성화할 수 있어 코드가 매우 깔끔
-                .formLogin(Customizer.withDefaults()) // 기본 로그인 폼 사용 (필요 시)
-        ;
+                // 4. 폼 로그인 및 기본 HTTP 인증 비활성화 (JWT를 사용하므로)
+                .formLogin(formLogin -> formLogin.disable())
+                .httpBasic(httpBasic -> httpBasic.disable());
+
+        // 5. 커스텀 JWT 필터를 스프링 기본 인증 필터보다 먼저 동작하도록 등록
+        http.addFilterBefore(
+                jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class
+        );
+
         return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // 비밀번호를 안전하게 암호화(해시) 해주는 BCrypt 알고리즘 사용
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        // 임시 사용자 정보를 메모리에 등록합니다.
-
-        // **중요:** 사용자 비밀번호 "password"는 반드시 인코딩되어 저장되어야 합니다!
         User tempUser = User.builder()
-                .username("admin") // 로그인 ID
-                .password(passwordEncoder.encode("qwer1234")) // 비밀번호를 암호화하여 저장
+                .username("admin")
+                .password(passwordEncoder.encode("qwer1234"))
                 .authorities(
-                        // 권한은 임시로 ROLE_ADMIN 하나를 부여
                         java.util.List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
                 )
                 .build();
-
-        // 메모리 기반 UserDetailsManager에 사용자 정보를 등록
         return new InMemoryUserDetailsManager(tempUser);
     }
 
-    // AuthenticationManager Bean 활성화
-    // AuthController의 로그인 컨트롤러는 AuthenticationManager를 사용하는데,
-    // Spring Boot 3.x 버전에서는 이 매니저를 Bean으로 명시적으로 노출시켜야 함
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        // AuthenticationManager를 외부로 노출시켜 AuthController에서 사용할 수 있게 함
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 }
