@@ -3,7 +3,9 @@ package io.github.hyunjaegit.aws_secutiry.config;
 import io.github.hyunjaegit.aws_secutiry.user.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -62,4 +64,14 @@ public class SecurityConfig {
         // 메모리 기반 UserDetailsManager에 사용자 정보를 등록
         return new InMemoryUserDetailsManager(tempUser);
     }
+
+    // AuthenticationManager Bean 활성화
+    // AuthController의 로그인 컨트롤러는 AuthenticationManager를 사용하는데,
+    // Spring Boot 3.x 버전에서는 이 매니저를 Bean으로 명시적으로 노출시켜야 함
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        // AuthenticationManager를 외부로 노출시켜 AuthController에서 사용할 수 있게 함
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
 }
