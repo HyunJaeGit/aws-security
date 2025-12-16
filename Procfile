@@ -1,1 +1,1 @@
-web: java -jar build/libs/aws-secutiry-0.0.1-SNAPSHOT.jar
+web: java -jar aws-secutiry-0.0.1-SNAPSHOT.jar
