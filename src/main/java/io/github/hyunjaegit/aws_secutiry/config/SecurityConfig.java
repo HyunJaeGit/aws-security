@@ -32,6 +32,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // 로그인 폼 활성화
+                // Customizer.withDefaults()를 사용하면
+                // Spring Security의 기본 설정값으로 formLogin을 활성화할 수 있어 코드가 매우 깔끔
                 .formLogin(Customizer.withDefaults()) // 기본 로그인 폼 사용 (필요 시)
         ;
         return http.build();
