@@ -3,6 +3,7 @@ package io.github.hyunjaegit.aws_secutiry.config;
 import io.github.hyunjaegit.aws_secutiry.user.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,10 +25,14 @@ public class SecurityConfig {
 
                 // 변경 전: .authorizeHttpRequests(authorize -> authorize...)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/logs").permitAll()
+                        // 접근 규칙 강화 (인증 요구 테스트)
+                        // ⚠️ 기존: .requestMatchers("/api/logs").permitAll()
+                        // 👇 수정: 인증된 사용자만 접근 가능
+                        .requestMatchers("/api/logs").authenticated()
                         .anyRequest().authenticated()
                 )
-        // .formLogin(Customizer.withDefaults()) // 기본 로그인 폼 사용 (필요 시)
+                // 로그인 폼 활성화
+                .formLogin(Customizer.withDefaults()) // 기본 로그인 폼 사용 (필요 시)
         ;
         return http.build();
     }
