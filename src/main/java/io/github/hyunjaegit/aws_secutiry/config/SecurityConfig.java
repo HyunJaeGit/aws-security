@@ -23,7 +23,6 @@ public class SecurityConfig {
                 )
         // .formLogin(Customizer.withDefaults()) // 기본 로그인 폼 사용 (필요 시)
         ;
-
         return http.build();
     }
 }
