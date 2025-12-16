@@ -35,8 +35,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF 방어 비활성화 (JWT는 세션을 사용하지 않으므로)
 
                 .authorizeHttpRequests(authorize -> authorize
-                        // 3. 로그인 API만 인증 없이 접근 허용
-                        .requestMatchers("/api/auth/login").permitAll()
+                        // 🎯 수정: 로그인 API 경로 접근 허용을 명시적으로 와일드카드(*)까지 포함하여 설정
+                        .requestMatchers("/api/auth/**").permitAll() // 👈 이 부분을 수정했습니다.
 
                         // /api/logs와 그 외 모든 요청은 인증 필요
                         .requestMatchers("/api/logs").authenticated()
