@@ -37,6 +37,12 @@ dependencies {
 	// 보안 기능을 추가
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-test' // 테스트용 (선택)
+
+	// JWT(JSON Web Token) 라이브러리 추가
+	// 세션 기반 로그인 폼 대신 토큰 기반 인증(JWT) 방식
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
 }
 
 tasks.named('test') {
