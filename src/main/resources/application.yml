@@ -1,16 +1,14 @@
 spring:
   datasource:
-    # ??? ?? aws_security_db ??? ???? 1234 ??
-    url: jdbc:mysql://localhost:3306/aws_security_db
-    username: root
-    password: '1234'
+    # localhost 대신 방금 받은 엔드포인트를 넣습니다.
+    url: jdbc:mysql://aws-security-db.cd2u0byng2ls.ap-northeast-2.rds.amazonaws.com:3306/aws_security_db
+    username: admin
+    password: 'qwer1234'
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
-      # ??? ?? ??? ??? DB? ???? ???? ????? ?? ??
       ddl-auto: update
-    show-sql: true # ???? SQL? ???? ???
+    show-sql: true
     properties:
       hibernate:
         format_sql: true # SQL? ??? ???? ???

@@ -33,6 +33,10 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// 보안 기능을 추가
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-test' // 테스트용 (선택)
 }
 
 tasks.named('test') {
