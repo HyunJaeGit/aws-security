@@ -58,4 +58,16 @@ public class JwtTokenProvider {
             return false;
         }
     }
+    /**
+     * 토큰에서 사용자 이름을 추출합니다. (JWT Filter에서 사용)
+     */
+    public String getUsernameFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject(); // subject는 토큰 생성 시 넣었던 username입니다.
+    }
+
 }
