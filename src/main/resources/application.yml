@@ -12,3 +12,8 @@ spring:
     properties:
       hibernate:
         format_sql: true # SQL? ??? ???? ???
+
+    jwt:
+      # ⚠️ 256비트 이상 (32자)의 Base64 인코딩된 안전한 키를 사용해야 합니다.
+      # 테스트용입니다
+      secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktd2l0aC1qd3QtdG9rZW4tc2VjcmV0LWtleS10ZXN0
