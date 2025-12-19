@@ -2,7 +2,7 @@ name: Java CI/CD with Docker and EC2
 
 on:
   push:
-    branches: [ "main", "master" ] # 본인의 메인 브랜치명 (main 인지 master 인지 확인!)
+    branches: [ "main" ] # 본인의 메인 브랜치명 (main 인지 master 인지 확인!)
 
 jobs:
   build-and-deploy:
